@@ -1,0 +1,38 @@
+{
+  "driAgentAgumon": {
+    "title": "Agumon (DRI Johann)",
+    "description": "Adicione Agumon ao seu grupo de Digimons",
+    "requisites": {
+      "partyLevel": "Ter o nível do grupo entre 30 e 45"
+    },
+    "steps": {
+      "1": {
+        "description": "Procure pelo DRI Johann no Vale Tyranno",
+        "locations": {
+          "0": {
+            "locationTarget": "DRI Johann"
+          }
+        }
+      },
+      "2": {
+        "description": "Vença MetalGreymon em batalha para receber o DDNA do Agumon",
+        "locations": {
+          "0": {
+            "locationTarget": "MetalGreymon"
+          }
+        }
+      },
+      "3": {
+        "description": "Entregue o DDNA do Agumon para DRI Johann",
+        "locations": {
+          "0": {
+            "locationTarget": "DRI Johann"
+          }
+        },
+        "requisites": {
+          "agumonDDNA": "DDNA de Agumon"
+        }
+      }
+    }
+  }
+}
