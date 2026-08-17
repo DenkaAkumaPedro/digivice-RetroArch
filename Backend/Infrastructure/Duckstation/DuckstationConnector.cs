@@ -1,3 +1,4 @@
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Backend.Infrastructure.Processes;
 using Serilog;
@@ -5,16 +6,16 @@ using Serilog;
 namespace Backend.Infrastructure.Duckstation;
 
 public sealed class DuckstationConnector(
-    DuckstationSession duckstationSession,
+    EmulatorSession emulatorSession,
     IProcessService processService,
     IMemoryProvider memoryProvider,
-    IConfiguration configuration) : IDuckstationConnector
+    IConfiguration configuration) : IEmulatorConnector
 {
-    private readonly string? EmulatorProcessName = configuration.GetValue<string>("EmulatorProcessName");
+    private readonly string? EmulatorProcessName = configuration.GetValue<string>("Emulator:Duckstation:ProcessName");
     private int? ConnectedProcessId { get; set; }
 
     private bool HasActiveConnection =>
-        ConnectedProcessId is not null && duckstationSession.Accessor is not null;
+        ConnectedProcessId is not null && emulatorSession.Accessor is not null;
     private bool ProcessIdChanged => processService.GetProcessIdByName(EmulatorProcessName!) != ConnectedProcessId;
 
     public ConnectionAttemptResult EnsureConnection()
@@ -51,7 +52,7 @@ public sealed class DuckstationConnector(
                 return ConnectionAttemptResult.Failure(EmulatorConnectionErrorCodes.MappingNotFound);
             }
 
-            duckstationSession.SetAccessor(memoryAccessor);
+            emulatorSession.SetAccessor(memoryAccessor);
             ConnectedProcessId = processId;
             Log.Information("Connected to DuckStation! Mapping found: {MapName}", duckstationMapName);
             return ConnectionAttemptResult.Success();
@@ -65,7 +66,7 @@ public sealed class DuckstationConnector(
 
     public void ClearSession()
     {
-        duckstationSession.ClearAccessor();
+        emulatorSession.ClearAccessor();
         ConnectedProcessId = null;
     }
 }

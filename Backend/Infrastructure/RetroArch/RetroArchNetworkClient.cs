@@ -1,0 +1,76 @@
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using Serilog;
+
+namespace Backend.Infrastructure.RetroArch;
+
+public interface IRetroArchNetworkClient : IDisposable
+{
+    bool IsConnected { get; }
+    void Connect(string host, int port);
+    void Disconnect();
+    string? SendCommand(string command);
+}
+
+public sealed class RetroArchNetworkClient : IRetroArchNetworkClient
+{
+    private UdpClient? _udpClient;
+    private IPEndPoint? _endPoint;
+    private readonly TimeSpan _timeout = TimeSpan.FromSeconds(2);
+
+    public bool IsConnected => _udpClient is not null && _endPoint is not null;
+
+    public void Connect(string host, int port)
+    {
+        Disconnect();
+
+        _udpClient = new UdpClient();
+        _udpClient.Client.ReceiveTimeout = (int)_timeout.TotalMilliseconds;
+        _udpClient.Client.SendTimeout = (int)_timeout.TotalMilliseconds;
+        _endPoint = new IPEndPoint(IPAddress.Parse(host), port);
+
+        Log.Information("RetroArch UDP client configured for {Host}:{Port}", host, port);
+    }
+
+    public void Disconnect()
+    {
+        _udpClient?.Dispose();
+        _udpClient = null;
+        _endPoint = null;
+    }
+
+    public string? SendCommand(string command)
+    {
+        if (_udpClient is null || _endPoint is null)
+        {
+            Log.Warning("RetroArch UDP client not connected");
+            return null;
+        }
+
+        try
+        {
+            byte[] commandBytes = Encoding.ASCII.GetBytes(command);
+            _udpClient.Send(commandBytes, commandBytes.Length, _endPoint);
+
+            IPEndPoint remoteEndPoint = new(IPAddress.Any, 0);
+            byte[] responseBytes = _udpClient.Receive(ref remoteEndPoint);
+            return Encoding.ASCII.GetString(responseBytes).Trim();
+        }
+        catch (SocketException ex)
+        {
+            Log.Warning("RetroArch UDP communication error: {Error}", ex.Message);
+            return null;
+        }
+        catch (ObjectDisposedException)
+        {
+            Log.Warning("RetroArch UDP client was disposed");
+            return null;
+        }
+    }
+
+    public void Dispose()
+    {
+        Disconnect();
+    }
+}

@@ -13,7 +13,7 @@ using Backend.Events.DTO;
 using Backend.Events.Models;
 using Backend.Events.Services;
 using Backend.Events.States;
-using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Memory;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -21,7 +21,7 @@ using Xunit;
 
 public class GameLoopServiceTests
 {
-    private readonly Mock<IDuckstationConnector> _duckstationConnectorMock;
+    private readonly Mock<IEmulatorConnector> _duckstationConnectorMock;
     private readonly Mock<IPlayerProvider> _playerProviderMock;
     private readonly Mock<IPartyProvider> _partyProviderMock;
     private readonly Mock<IJournalProvider> _journalProviderMock;
@@ -44,7 +44,7 @@ public class GameLoopServiceTests
 
     public GameLoopServiceTests()
     {
-        _duckstationConnectorMock = new Mock<IDuckstationConnector>();
+        _duckstationConnectorMock = new Mock<IEmulatorConnector>();
         _playerProviderMock = new Mock<IPlayerProvider>();
         _partyProviderMock = new Mock<IPartyProvider>();
         _journalProviderMock = new Mock<IJournalProvider>();

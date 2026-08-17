@@ -1,7 +1,7 @@
 namespace Tests.Memory.Readers;
 
 using System;
-using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Backend.Memory;
 using Backend.Memory.Readers;
@@ -10,20 +10,20 @@ using Xunit;
 
 public class MemoryReaderTests
 {
-    private static (DuckstationSession Session, Mock<IMemoryAccessor> AccessorMock, MemoryReader Reader) CreateConnectedReader()
+    private static (EmulatorSession Session, Mock<IMemoryAccessor> AccessorMock, MemoryReader Reader) CreateConnectedReader()
     {
-        var duckstationSession = new DuckstationSession();
+        var emulatorSession = new EmulatorSession();
         var accessorMock = new Mock<IMemoryAccessor>();
-        duckstationSession.SetAccessor(accessorMock.Object);
+        emulatorSession.SetAccessor(accessorMock.Object);
 
-        return (duckstationSession, accessorMock, new MemoryReader(duckstationSession));
+        return (emulatorSession, accessorMock, new MemoryReader(emulatorSession));
     }
 
     [Fact]
     public void ReadInt32_ShouldThrowMemoryReadException_WhenDisconnected()
     {
-        var duckstationSession = new DuckstationSession();
-        var reader = new MemoryReader(duckstationSession);
+        var emulatorSession = new EmulatorSession();
+        var reader = new MemoryReader(emulatorSession);
 
         var exception = Assert.Throws<MemoryReadException>(() => reader.ReadInt32(0x800100));
 
@@ -76,8 +76,8 @@ public class MemoryReaderTests
     [Fact]
     public void ReadInt16_ShouldThrowMemoryReadException_WhenDisconnected()
     {
-        var duckstationSession = new DuckstationSession();
-        var reader = new MemoryReader(duckstationSession);
+        var emulatorSession = new EmulatorSession();
+        var reader = new MemoryReader(emulatorSession);
 
         Assert.Throws<MemoryReadException>(() => reader.ReadInt16(0x800100));
     }
@@ -108,8 +108,8 @@ public class MemoryReaderTests
     [Fact]
     public void ReadBytes_ShouldThrowMemoryReadException_WhenDisconnected()
     {
-        var duckstationSession = new DuckstationSession();
-        var reader = new MemoryReader(duckstationSession);
+        var emulatorSession = new EmulatorSession();
+        var reader = new MemoryReader(emulatorSession);
 
         Assert.Throws<MemoryReadException>(() => reader.ReadBytes(0x800100, 3));
     }

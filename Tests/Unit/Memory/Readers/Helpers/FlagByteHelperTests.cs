@@ -1,6 +1,6 @@
 namespace Tests.Unit.Memory.Readers.Helpers;
 
-using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Backend.Memory;
 using Backend.Memory.Readers;
@@ -61,13 +61,13 @@ public class FlagByteHelperTests
     [Fact]
     public void Read_ShouldIntegrateWithMemoryReader_WhenConnected()
     {
-        var duckstationSession = new DuckstationSession();
+        var emulatorSession = new EmulatorSession();
         var accessorMock = new Mock<IMemoryAccessor>();
-        duckstationSession.SetAccessor(accessorMock.Object);
+        emulatorSession.SetAccessor(accessorMock.Object);
         accessorMock.Setup(accessor => accessor.ReadArray(0x800100, It.IsAny<byte[]>(), 0, 1))
             .Callback<long, byte[], int, int>((address, buffer, index, count) => { buffer[0] = 90; });
 
-        var memoryReader = new MemoryReader(duckstationSession);
+        var memoryReader = new MemoryReader(emulatorSession);
 
         var result = FlagByteHelper.Read(memoryReader, 0x800100, 15);
 

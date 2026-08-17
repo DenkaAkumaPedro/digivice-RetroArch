@@ -1,14 +1,14 @@
-using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Serilog;
 
 namespace Backend.Memory.Readers
 {
-    public class MemoryReader(IDuckstationSession duckstationSession) : IMemoryReader
+    public class MemoryReader(IEmulatorSession emulatorSession) : IMemoryReader
     {
         private IMemoryAccessor GetConnectedAccessor(long address)
         {
-            var accessor = duckstationSession.Accessor;
+            var accessor = emulatorSession.Accessor;
             if (accessor == null)
             {
                 throw new MemoryReadException(address, "Memory session is not connected.");

@@ -11,7 +11,7 @@ using Backend.Diagnostics;
 using Backend.Events.Services;
 using Backend.Events.States;
 using Backend.Infrastructure;
-using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Backend.Infrastructure.Processes;
 using Backend.Memory.Readers;
@@ -35,7 +35,8 @@ public class DependencyInjectionTests
         IConfiguration configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new[]
             {
-                new System.Collections.Generic.KeyValuePair<string, string?>("EmulatorProcessName", "duckstation")
+                new System.Collections.Generic.KeyValuePair<string, string?>("Emulator:Type", "Duckstation"),
+                new System.Collections.Generic.KeyValuePair<string, string?>("Emulator:Duckstation:ProcessName", "duckstation")
             })
             .Build();
 
@@ -49,9 +50,9 @@ public class DependencyInjectionTests
 
         Assert.NotNull(provider.GetRequiredService<IProcessService>());
         Assert.NotNull(provider.GetRequiredService<IMemoryProvider>());
-        Assert.NotNull(provider.GetRequiredService<IDuckstationSession>());
+        Assert.NotNull(provider.GetRequiredService<IEmulatorSession>());
         Assert.NotNull(provider.GetRequiredService<IMemoryReader>());
-        Assert.NotNull(provider.GetRequiredService<IDuckstationConnector>());
+        Assert.NotNull(provider.GetRequiredService<IEmulatorConnector>());
         Assert.NotNull(provider.GetRequiredService<IAddressesRepository>());
 
 
