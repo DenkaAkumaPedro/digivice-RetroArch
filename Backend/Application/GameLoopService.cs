@@ -59,6 +59,9 @@ namespace Backend.Application
 
                         gameStateStore.UpdateState(newState);
 
+                        Serilog.Log.Information("State read OK - Player: {MapId}, Bits: {Bits}",
+                            newState.Player?.MapId ?? "?", newState.Player?.Bits ?? 0);
+
                         if (isDebuggingEnabled && !Console.IsOutputRedirected)
                         {
                             debugConsoleRenderer.Render(newState);

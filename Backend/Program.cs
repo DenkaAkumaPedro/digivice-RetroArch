@@ -3,7 +3,7 @@ using Backend.Infrastructure;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Warning()
+    .MinimumLevel.Information()
     .WriteTo.Console()
     .CreateLogger();
 
