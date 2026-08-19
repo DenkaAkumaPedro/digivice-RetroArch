@@ -63,8 +63,10 @@ network_cmd_port = "55355"
 
 O RetroArch precisa de um núcleo PS1 compatível. Baixe via **Atualizador de Core**:
 
-- **Beetle PSX** (mais preciso) - config: `"Core": "BeetlePSX"`
-- **SwanStation** (mais leve) - config: `"Core": "SwanStation"`
+- **Beetle PSX** - Recomendado. Mais preciso.
+- **PCSX-ReARMed** - Compatível. Mais leve, porém menos preciso.
+
+> **Nota:** O SwanStation **não é compatível** com este app pois não implementa o mapa de memória necessário.
 
 ### 3. Carregar o Jogo
 
@@ -107,7 +109,7 @@ Para usar **Duckstation**, mude `"Type": "RetroArch"` para `"Type": "Duckstation
 
 ### RetroArch (novo)
 - Comunica via **UDP Network Commands** (porta 55355)
-- Usa comandos `GET_STATUS`, `READ_CORE_MEMORY` (BeetlePSX) ou `READ_CORE_RAM` (SwanStation)
+- Usa comandos `GET_STATUS` e `READ_CORE_MEMORY`
 - Requer "Comandos de Rede" habilitado no RetroArch
 
 ---

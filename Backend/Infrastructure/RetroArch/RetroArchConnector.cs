@@ -11,7 +11,6 @@ public sealed class RetroArchConnector(
     private bool _isConnected;
     private string? _host;
     private int _port;
-    private RetroArchCoreType _coreType;
 
     public ConnectionAttemptResult EnsureConnection()
     {
@@ -41,7 +40,7 @@ public sealed class RetroArchConnector(
 
             Log.Information("Connected to RetroArch at {Host}:{Port}. Status: {Status}", _host, _port, statusResponse);
 
-            var memoryAccessor = new RetroArchMemoryAccessor(networkClient, _coreType);
+            var memoryAccessor = new RetroArchMemoryAccessor(networkClient);
             emulatorSession.SetAccessor(memoryAccessor);
             _isConnected = true;
 
@@ -64,13 +63,6 @@ public sealed class RetroArchConnector(
     {
         _host = configuration.GetValue<string>("Emulator:RetroArch:Host") ?? "127.0.0.1";
         _port = configuration.GetValue<int?>("Emulator:RetroArch:Port") ?? 55355;
-
-        string coreTypeString = configuration.GetValue<string>("Emulator:RetroArch:Core") ?? "BeetlePSX";
-
-        if (!Enum.TryParse<RetroArchCoreType>(coreTypeString, ignoreCase: true, out _coreType))
-        {
-            _coreType = RetroArchCoreType.BeetlePSX;
-        }
 
         return true;
     }

@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 Write-Host "Building Digivice Release (V1)" -ForegroundColor Cyan
 
 # 1. Obter os caminhos absolutos
-$RootPath = "c:\Projetos\digivice"
+$RootPath = $PSScriptRoot
 $BackendPath = Join-Path $RootPath "Backend"
 $FrontendPath = Join-Path $RootPath "Frontend"
 $OutTempPath = Join-Path $RootPath "out_temp"

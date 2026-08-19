@@ -3,12 +3,10 @@ using Backend.Infrastructure.Memory;
 
 namespace Backend.Infrastructure.RetroArch;
 
-public sealed partial class RetroArchMemoryAccessor(
-    IRetroArchNetworkClient networkClient,
-    RetroArchCoreType coreType) : IMemoryAccessor
+public sealed class RetroArchMemoryAccessor(
+    IRetroArchNetworkClient networkClient) : IMemoryAccessor
 {
     private readonly IRetroArchNetworkClient _networkClient = networkClient;
-    private readonly RetroArchCoreType _coreType = coreType;
 
     public int ReadInt32(long address)
     {
@@ -30,9 +28,7 @@ public sealed partial class RetroArchMemoryAccessor(
 
     private byte[] ReadBytes(long address, int length)
     {
-        string command = _coreType == RetroArchCoreType.SwanStation
-            ? $"READ_CORE_RAM {address:X} {length}"
-            : $"READ_CORE_MEMORY {address:X} {length}";
+        string command = $"READ_CORE_MEMORY {address:X} {length}";
 
         string? response = _networkClient.SendCommand(command);
 
@@ -84,8 +80,3 @@ public sealed partial class RetroArchMemoryAccessor(
     }
 }
 
-public enum RetroArchCoreType
-{
-    BeetlePSX,
-    SwanStation
-}
