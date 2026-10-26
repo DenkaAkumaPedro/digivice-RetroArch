@@ -7,11 +7,13 @@ using Backend.Diagnostics;
 using Backend.Events.Services;
 using Backend.Events.States;
 using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Backend.Infrastructure.Processes;
+using Backend.Infrastructure.RetroArch;
 using Backend.Memory.Readers;
-using Backend.Memory.Repositories;
 using Backend.Memory.Readers.Interfaces;
+using Backend.Memory.Repositories;
 
 namespace Backend.Infrastructure
 {
@@ -19,12 +21,24 @@ namespace Backend.Infrastructure
     {
         public static IServiceCollection AddBackendServices(this IServiceCollection services, string basePath)
         {
+            var emulatorType = GetEmulatorType(services);
+
             services.AddSingleton<IProcessService, WindowsProcessProvider>();
             services.AddSingleton<IMemoryProvider, WindowsMemoryProvider>();
-            services.AddSingleton<DuckstationSession>();
-            services.AddSingleton<IDuckstationSession>(provider => provider.GetRequiredService<DuckstationSession>());
-            services.AddSingleton<IDuckstationConnector, DuckstationConnector>();
+            services.AddSingleton<EmulatorSession>();
+            services.AddSingleton<IEmulatorSession>(provider => provider.GetRequiredService<EmulatorSession>());
             services.AddSingleton<IMemoryReader, MemoryReader>();
+
+            switch (emulatorType)
+            {
+                case EmulatorType.RetroArch:
+                    services.AddSingleton<IEmulatorConnector, RetroArchConnector>();
+                    services.AddSingleton<IRetroArchNetworkClient, RetroArchNetworkClient>();
+                    break;
+                default:
+                    services.AddSingleton<IEmulatorConnector, DuckstationConnector>();
+                    break;
+            }
 
             string memoryDefinitionsDirectory = Path.Combine(basePath, "Memory", "Definitions");
             services.AddSingleton<IAddressesRepository>(new AddressesRepository(memoryDefinitionsDirectory));
@@ -76,6 +90,20 @@ namespace Backend.Infrastructure
             services.AddHostedService<GameLoopService>();
 
             return services;
+        }
+
+        private static EmulatorType GetEmulatorType(IServiceCollection services)
+        {
+            using var serviceProvider = services.BuildServiceProvider();
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            var emulatorTypeString = configuration.GetValue<string>("Emulator:Type");
+
+            if (Enum.TryParse<EmulatorType>(emulatorTypeString, ignoreCase: true, out var emulatorType))
+            {
+                return emulatorType;
+            }
+
+            return EmulatorType.Duckstation;
         }
     }
 }

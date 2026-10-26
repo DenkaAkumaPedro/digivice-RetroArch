@@ -1,21 +1,36 @@
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Backend.Infrastructure.Processes;
 
 namespace Backend.Infrastructure.Duckstation;
 
 public sealed class DuckstationConnector(
-    DuckstationSession duckstationSession,
+    EmulatorSession emulatorSession,
     IProcessService processService,
     IMemoryProvider memoryProvider,
     IConfiguration configuration,
-    ILogger<DuckstationConnector> logger) : IDuckstationConnector
+    ILogger<DuckstationConnector> logger) : IEmulatorConnector
 {
-    private readonly string? EmulatorProcessName = configuration.GetValue<string>("EmulatorProcessName");
+    private string? EmulatorProcessName
+    {
+        get
+        {
+            var value = configuration.GetSection("Emulator:Duckstation:ProcessName").Value;
+            if (!string.IsNullOrEmpty(value)) return value;
+            value = configuration["Emulator:Duckstation:ProcessName"];
+            if (!string.IsNullOrEmpty(value)) return value;
+            value = configuration.GetSection("EmulatorProcessName").Value;
+            if (!string.IsNullOrEmpty(value)) return value;
+            value = configuration["EmulatorProcessName"];
+            return string.IsNullOrEmpty(value) ? null : value;
+        }
+    }
+
     private int? ConnectedProcessId { get; set; }
 
     private bool HasActiveConnection =>
-        ConnectedProcessId is not null && duckstationSession.Accessor is not null;
-    private bool ProcessIdChanged => processService.GetProcessIdByName(EmulatorProcessName!) != ConnectedProcessId;
+        ConnectedProcessId is not null && emulatorSession.Accessor is not null;
+    private bool ProcessIdChanged => EmulatorProcessName != null && processService.GetProcessIdByName(EmulatorProcessName) != ConnectedProcessId;
 
     public ConnectionAttemptResult EnsureConnection()
     {
@@ -51,7 +66,7 @@ public sealed class DuckstationConnector(
                 return ConnectionAttemptResult.Failure(EmulatorConnectionErrorCodes.MappingNotFound);
             }
 
-            duckstationSession.SetAccessor(memoryAccessor);
+            emulatorSession.SetAccessor(memoryAccessor);
             ConnectedProcessId = processId;
             logger.LogInformation("Connected to DuckStation! Mapping found: {MapName}", duckstationMapName);
             return ConnectionAttemptResult.Success();
@@ -65,7 +80,7 @@ public sealed class DuckstationConnector(
 
     public void ClearSession()
     {
-        duckstationSession.ClearAccessor();
+        emulatorSession.ClearAccessor();
         ConnectedProcessId = null;
     }
 }

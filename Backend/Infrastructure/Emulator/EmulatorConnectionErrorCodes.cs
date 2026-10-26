@@ -1,4 +1,4 @@
-namespace Backend.Infrastructure.Duckstation;
+namespace Backend.Infrastructure.Emulator;
 
 public static class EmulatorConnectionErrorCodes
 {

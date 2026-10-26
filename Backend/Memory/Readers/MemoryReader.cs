@@ -1,16 +1,16 @@
-using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Backend.Memory.Readers.Interfaces;
 
 namespace Backend.Memory.Readers
 {
     public class MemoryReader(
-        IDuckstationSession duckstationSession,
+        IEmulatorSession emulatorSession,
         ILogger<MemoryReader> logger) : IMemoryReader
     {
         private IMemoryAccessor GetConnectedAccessor(long address)
         {
-            var accessor = duckstationSession.Accessor;
+            var accessor = emulatorSession.Accessor;
             if (accessor == null)
             {
                 throw new MemoryReadException(address, "Memory session is not connected.");

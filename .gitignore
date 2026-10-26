@@ -73,3 +73,10 @@ tools/memoryscanner/snapshot/
 ## Others
 .DS_Store
 Thumbs.db
+
+
+## Build artifacts / local runtime
+out_temp/
+digivice-release/
+node_modules/
+DigiviceAtual/

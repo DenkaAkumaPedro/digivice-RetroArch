@@ -9,7 +9,7 @@ using Backend.Diagnostics;
 using Backend.Events.Services;
 using Backend.Events.States;
 using Backend.Infrastructure;
-using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Infrastructure.Memory;
 using Backend.Infrastructure.Processes;
 using Backend.Memory.Repositories;
@@ -43,9 +43,9 @@ public class DependencyInjectionTests
 
         Assert.NotNull(provider.GetRequiredService<IProcessService>());
         Assert.NotNull(provider.GetRequiredService<IMemoryProvider>());
-        Assert.NotNull(provider.GetRequiredService<IDuckstationSession>());
+        Assert.NotNull(provider.GetRequiredService<IEmulatorSession>());
         Assert.NotNull(provider.GetRequiredService<IMemoryReader>());
-        Assert.NotNull(provider.GetRequiredService<IDuckstationConnector>());
+        Assert.NotNull(provider.GetRequiredService<IEmulatorConnector>());
         Assert.NotNull(provider.GetRequiredService<IAddressesRepository>());
 
 

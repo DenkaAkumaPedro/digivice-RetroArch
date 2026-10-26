@@ -1,4 +1,4 @@
-namespace Backend.Infrastructure.Duckstation;
+namespace Backend.Infrastructure.Emulator;
 
 public readonly record struct ConnectionAttemptResult
 {
@@ -16,3 +16,4 @@ public readonly record struct ConnectionAttemptResult
             ErrorDetail = errorDetail
         };
 }
+

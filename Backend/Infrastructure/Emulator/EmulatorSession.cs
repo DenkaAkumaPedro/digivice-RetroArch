@@ -1,8 +1,8 @@
 using Backend.Infrastructure.Memory;
 
-namespace Backend.Infrastructure.Duckstation;
+namespace Backend.Infrastructure.Emulator;
 
-public sealed class DuckstationSession : IDuckstationSession
+public sealed class EmulatorSession : IEmulatorSession
 {
     public IMemoryAccessor? Accessor { get; private set; }
 
@@ -17,3 +17,4 @@ public sealed class DuckstationSession : IDuckstationSession
         Accessor = null;
     }
 }
+

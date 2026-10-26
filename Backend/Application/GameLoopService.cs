@@ -2,14 +2,14 @@ using Backend.Diagnostics;
 using Backend.Events.Factory;
 using Backend.Events.Services;
 using Backend.Events.States;
-using Backend.Infrastructure.Duckstation;
+using Backend.Infrastructure.Emulator;
 using Backend.Memory;
 
 namespace Backend.Application
 {
     public class GameLoopService
     (
-        IDuckstationConnector duckstationConnector,
+        IEmulatorConnector emulatorConnector,
         StateComposer stateComposer,
         IEventDispatcherService eventDispatcherService,
         IGameStateStore gameStateStore,
@@ -29,7 +29,7 @@ namespace Backend.Application
             {
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    var connectionAttemptResult = duckstationConnector.EnsureConnection();
+                    var connectionAttemptResult = emulatorConnector.EnsureConnection();
                     if (!connectionAttemptResult.IsSuccess)
                     {
                         eventDispatcherService.DispatchEvents(
@@ -60,6 +60,9 @@ namespace Backend.Application
 
                         gameStateStore.UpdateState(newState);
 
+                        logger.LogInformation("State read OK - Player: {MapId}, Bits: {Bits}",
+                            newState.Player?.MapId ?? "?", newState.Player?.Bits ?? 0);
+
                         if (isDebuggingEnabled && !Console.IsOutputRedirected)
                         {
                             debugConsoleRenderer.Render(newState);
@@ -67,7 +70,7 @@ namespace Backend.Application
                     }
                     catch (MemoryReadException ex)
                     {
-                        duckstationConnector.ClearSession();
+                        emulatorConnector.ClearSession();
                         eventDispatcherService.DispatchEvents(
                             ConnectionEventFactory.CreateError(
                                 gameStateStore,
@@ -86,7 +89,7 @@ namespace Backend.Application
                     catch (Exception ex)
                     {
                         logger.LogError(ex, "Error processing game state in GameLoopService.");
-                        duckstationConnector.ClearSession();
+                        emulatorConnector.ClearSession();
                         eventDispatcherService.DispatchEvents(
                             ConnectionEventFactory.CreateError(
                                 gameStateStore,
@@ -111,7 +114,7 @@ namespace Backend.Application
             }
             finally
             {
-                duckstationConnector.ClearSession();
+                emulatorConnector.ClearSession();
                 logger.LogInformation("GameLoopService shutting down gracefully.");
             }
         }
