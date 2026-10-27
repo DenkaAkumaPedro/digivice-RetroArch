@@ -14,11 +14,11 @@
     },
     "emulator": {
       "title": "Emulador não encontrado",
-      "hint": "Abra o Duckstation, carregue o Digimon World 2003 e, em Debugging, ative Export Memory Shared.",
+      "hint": "Abra o RetroArch com o core Beetle PSX, carregue o Digimon World 2003, deixe o Digimon no mapa e, em Rede, ative os Comandos de Rede (porta 55355).",
       "codes": {
         "config_missing": {
           "title": "Configuração do emulador ausente",
-          "hint": "O app não encontrou EmulatorProcessName nas configurações do backend. Contate o desenvolvedor."
+          "hint": "O app não encontrou a configuração do emulador nas configurações do backend. Contate o desenvolvedor."
         },
         "process_not_found": {
           "title": "Emulador não encontrado",
@@ -29,8 +29,8 @@
           "hint": "No Duckstation, abra Debugging e ative Export Memory Shared, depois recarregue o jogo."
         },
         "connection_failed": {
-          "title": "Não foi possível conectar à memória do Duckstation",
-          "hint": "O app encontrou o Duckstation, mas falhou ao abrir o mapeamento de memória compartilhada. Veja o detalhe técnico abaixo."
+          "title": "Não foi possível conectar ao emulador",
+          "hint": "O app não conseguiu se comunicar com o RetroArch. Verifique se os Comandos de Rede estão ativos (porta 55355) e se o jogo está no mapa. Veja o detalhe técnico abaixo."
         },
         "memory_read_failed": {
           "title": "Falha ao ler a memória do emulador",
@@ -38,7 +38,7 @@
         },
         "state_compose_failed": {
           "title": "Falha ao processar o estado do jogo",
-          "hint": "O app conectou ao Duckstation, mas não conseguiu montar o estado atual do jogo. Veja o detalhe técnico abaixo."
+          "hint": "O app conectou ao emulador, mas não conseguiu montar o estado atual do jogo. Veja o detalhe técnico abaixo."
         }
       }
     }
